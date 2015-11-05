@@ -1,0 +1,21 @@
+.git
+.svn
+.DS_Store
+.sass-cache
+*.css.map
+error_log
+external-config.php
+/index.php
+/license.txt
+/readme.html
+/xmlrpc.php
+/_files*
+
+# Ignore WP Core
+/wp-*
+
+/content/uploads/*
+/content/plugins/*
+
+# Don't ignore
+!wp-config.php
