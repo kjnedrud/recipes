@@ -6,11 +6,12 @@
 /**
  * Actions & Filters
  */
-// add_action( 'init', 'init' );
+add_action( 'init', 'init' );
 // add_action( 'admin_init', 'remove_dashboard_widgets' );
-add_action( 'wp_enqueue_scripts', 'add_styles' );
-add_action( 'wp_enqueue_scripts', 'add_scripts' );
+add_action('wp_enqueue_scripts', 'add_styles');
+add_action('wp_enqueue_scripts', 'add_scripts');
 add_action('pre_get_posts', 'modify_home_query');
+add_action('admin_menu', 'change_admin_post_label');
 
 
 /**
@@ -75,12 +76,47 @@ function setup() {
  */
 function init() {
 
+	// change 'Posts' to 'Recipes'
+	global $wp_post_types;
+	// custom names
+	$name = 'Recipes';
+	$singular_name = 'Recipe';
+	// set labels
+	$labels = &$wp_post_types['post']->labels;
+	$labels->name = $name;
+	$labels->singular_name = $singular_name;
+	$labels->add_new = 'Add New';
+	$labels->add_new_item = "Add New $singular_name";
+	$labels->edit_item = "Edit $singular_name";
+	$labels->new_item = "New $singular_name";
+	$labels->view_item = "View $singular_name";
+	$labels->search_items = "Search $name";
+	$labels->not_found = "No $name found";
+	$labels->not_found_in_trash = "$not_found in Trash";
+	$labels->all_items = "All $labels->name";
+	$labels->menu_name = $name;
+	$labels->name_admin_bar = $name;
+
 	// register_post_type
 
 	// register_taxonomy
 
 	// add_rewrite_rule
 
+}
+
+
+/**
+ * Change 'Posts' to 'Recipes' in WP Admin nav
+ */
+function change_admin_post_label() {
+	global $menu;
+	global $submenu;
+	$menu[5][0] = 'Recipes';
+	$submenu['edit.php'][5][0] = 'Recipes';
+	$submenu['edit.php'][10][0] = 'Add Recipe';
+	$submenu['edit.php'][16][0] = 'Tags';
+	echo '';
 }
 
 
