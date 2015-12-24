@@ -141,6 +141,8 @@ li {
     text-decoration: none; }
 
 .post-edit-link {
+  font-size: 12px;
+  font-weight: 700;
   text-transform: uppercase; }
 
 .ingredients {
