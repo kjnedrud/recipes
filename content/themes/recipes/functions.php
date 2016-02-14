@@ -33,14 +33,6 @@ remove_action('wp_print_styles', 'print_emoji_styles');
 
 
 /**
- * This is required for ACF to work when WP is installed in a subdirectory
- */
-add_filter('acf/settings/dir', function( $dir ) {
-	return site_url() . '/content/plugins/advanced-custom-fields/';
-});
-
-
-/**
  * Disable admin bar
  */
 add_filter('show_admin_bar', '__return_false');
