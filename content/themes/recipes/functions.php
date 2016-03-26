@@ -165,3 +165,34 @@ function get_archive_title() {
 		return 'Archive';
 	}
 }
+
+/**
+ * Given an ingredients string, parse the whitespace
+ * and use it to build html for the ingredients list
+ */
+function get_ingredients_html($string) {
+	// trim excess whitespace
+	$html = trim($string);
+
+	// if first line is followed by blank line, it should be wrapped in an h6 and followed by the start of a list
+	if (preg_match('#\A(.*)\r\n\r\n#m', $html, $matches)) {
+		$html = str_replace($matches[0], '<h6>' . $matches[1] . '</h6><ul><li>', $html);
+	}
+	// otherwise, just start with a list
+	else {
+		$html = '<ul><li>' . $html;
+	}
+	// close list
+	$html .= '</li></ul>';
+
+	// titles (blank lines before and after) should be wrapped in an h6, close previous list, and start a new list
+	$html = preg_replace('#\r\n\r\n(.*)\r\n\r\n#m', "</li></ul><h6>$1</h6><ul><li>", $html);
+
+	// regular list items
+	$html = str_replace("\r\n", '</li><li>', $html);
+
+	// ingredients wrapper
+	$html = '<div class="ingredients">' . $html . '</div>';
+
+	return $html;
+}
