@@ -13,6 +13,7 @@ get_header(); ?>
 			<?php while(have_posts()) : the_post(); ?>
 				<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 			<?php endwhile; ?>
+			<?php echo paginate_links(); ?>
 		<?php else : ?>
 			<p>Sorry, no content was found.</p>
 		<?php endif; ?>
