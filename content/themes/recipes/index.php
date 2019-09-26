@@ -19,7 +19,7 @@ get_header(); ?>
 				<?php if (function_exists('get_field')) {
 					$ingredients = get_field('ingredients');
 						if (!empty($ingredients)) {
-						echo '<ul class="ingredients"><li>' . str_replace("\n", '</li><li>', $ingredients) . '</li></ul>';
+							echo get_ingredients_html($ingredients);
 						}
 				} ?>
 				<div class="recipe"><?php the_content(); ?></div>
