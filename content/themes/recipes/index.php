@@ -9,7 +9,7 @@ get_header(); ?>
 
 	<div class="content">
 		<?php while(have_posts()) : the_post(); ?>
-			<?php if(is_front_page() || is_singular()) : ?>
+			<?php if (is_front_page() || is_singular()) : ?>
 				<header class="recipe-header">
 					<h1><?php the_title(); ?></h1>
 					<div class="recipe-info">

@@ -3,6 +3,8 @@
  * Theme Functions
  */
 
+define(THEME_VERSION, wp_get_theme()->get('Version'));
+
 /**
  * Actions & Filters
  */
@@ -12,6 +14,14 @@ add_action('wp_enqueue_scripts', 'add_styles');
 add_action('wp_enqueue_scripts', 'add_scripts');
 add_action('pre_get_posts', 'modify_home_query');
 add_action('admin_menu', 'change_admin_post_label');
+
+
+/**
+ * Advanced Custom Fields
+ */
+if (function_exists('acf_register_block_type')) {
+	add_action('acf/init', 'register_acf_block_types');
+}
 
 
 /**
@@ -35,7 +45,7 @@ remove_action('wp_print_styles', 'print_emoji_styles');
 /**
  * Disable admin bar
  */
-add_filter('show_admin_bar', '__return_false');
+// add_filter('show_admin_bar', '__return_false');
 
 
 /**
@@ -68,13 +78,15 @@ function setup() {
  */
 function init() {
 
-	// change 'Posts' to 'Recipes'
-	global $wp_post_types;
-	// custom names
+	// modify post object
+	$post_type_object = get_post_type_object('post');
+
+	// change labels to use to 'Recipes' instead of 'Posts'
 	$name = 'Recipes';
 	$singular_name = 'Recipe';
+
 	// set labels
-	$labels = &$wp_post_types['post']->labels;
+	$labels = &$post_type_object->labels;
 	$labels->name = $name;
 	$labels->singular_name = $singular_name;
 	$labels->add_new = 'Add New';
@@ -88,6 +100,11 @@ function init() {
 	$labels->all_items = "All $labels->name";
 	$labels->menu_name = $name;
 	$labels->name_admin_bar = $name;
+
+	$post_type_object->template = array(
+		array('acf/ingredients'),
+		array('core/freeform'),
+	);
 
 	// register_post_type
 
@@ -118,13 +135,10 @@ function change_admin_post_label() {
 function add_styles() {
 
 	// google webfonts
-	// wp_enqueue_style( 'fonts', '//fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|Open+Sans:300italic,700italic,700,300', false, false, 'all' );
-
 	wp_enqueue_style( 'fonts', '//fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|Lato:300italic,700italic,700,300', false, false, 'all' );
 
 	// main styles
-	// wp_enqueue_style( 'main', site_url() . get_stylesheet_directory_uri() . '/assets/css/main.css', 'fonts', '1.0', 'all' );
-	wp_enqueue_style( 'main', site_url() . get_stylesheet_directory_uri() . '/assets/css/main.css', 'fonts', false, 'all' );
+	wp_enqueue_style( 'main', site_url() . get_stylesheet_directory_uri() . '/assets/css/main.css', 'fonts', THEME_VERSION, 'all' );
 }
 
 
@@ -151,9 +165,33 @@ function modify_home_query($query) {
 		// $query->set( 'posts_per_page', -1 );
 		$query->set( 'posts_per_page', 1 );
 	}
-
 }
 
+/**
+ * Register custom blocks for ACF
+ */
+function register_acf_block_types() {
+
+	// ingredients list block
+	acf_register_block_type(array(
+		'name' => 'ingredients',
+		'title' => __('Ingredients'),
+		'description' => __('List of ingredients'),
+		'render_template' => 'block-ingredients.php',
+		'category' => 'formatting',
+		'icon' => 'editor-list',
+		'keywords' => array('ingredients', 'list'),
+		'mode' => 'edit',
+		'supports' => array(
+			'align' => false,
+			'mode' => false,
+		),
+	));
+}
+
+/**
+ * Get title for achive template
+ */
 function get_archive_title() {
 	if (is_post_type_archive()) {
 		return get_post_type_archive_title('', false) . ' Archive';
@@ -170,7 +208,7 @@ function get_archive_title() {
  * Given an ingredients string, parse the whitespace
  * and use it to build html for the ingredients list
  */
-function get_ingredients_html($string) {
+function get_ingredients_html($string, $echo = false) {
 	// trim excess whitespace
 	$html = trim($string);
 
@@ -191,8 +229,10 @@ function get_ingredients_html($string) {
 	// regular list items
 	$html = str_replace("\r\n", '</li><li>', $html);
 
-	// ingredients wrapper
-	$html = '<div class="ingredients">' . $html . '</div>';
-
-	return $html;
+	if ($echo) {
+		echo $html;
+	}
+	else {
+		return $html;
+	}
 }
