@@ -155,8 +155,9 @@ li {
 }
 
 .recipe {
-	float: left;
-	width: 70%;
+	box-sizing: border-box;
+	padding-left: 360px;
+	width: 100%;
 }
 
 .recipe-header {
@@ -191,12 +192,10 @@ li {
 	font-family: $sans;
 	font-size: 16px;
 	font-weight: 700;
-	margin: 1.6rem 0;
-	margin-right: 5%;
-	margin-right: calc(0% + 40px);
+	margin: 0 40px 0 -360px;
 	padding: 20px;
-	width: 25%;
-	width: calc(30% - 40px);
+	width: 320px;
+
 	h6 {
 		color: #999;
 		margin: 1.6em 0 0.8em 0;
@@ -204,11 +203,13 @@ li {
 			margin-top: 0;
 		}
 	}
+
 	ul {
 		list-style-type: none;
 		margin: 0px;
 		padding: 0px;
 	}
+
 	li {
 		&:first-child {
 			margin-top: 0;
@@ -216,6 +217,10 @@ li {
 		&:last-child {
 			margin-bottom: 0;
 		}
+	}
+
+	.placeholder {
+		opacity: 0.5;
 	}
 }
 
@@ -257,7 +262,7 @@ li {
 	}
 }
 
-@media (max-width:940px) {
+@media (max-width: 940px) {
 	.content, .sidebar {
 		float: none;
 		width: 100%;
@@ -267,16 +272,9 @@ li {
 		margin-top: 40px;
 		padding-left: 0;
 	}
-	.recipe {
-		width: 60%;
-	}
-	.ingredients {
-		width: 35%;
-		width: calc(40% - 40px);
-	}
 }
 
-@media (max-width:720px) {
+@media (max-width: 720px) {
 
 	h1 {
 		font-size: 24px;
@@ -288,9 +286,19 @@ li {
 		font-size: 18px;
 	}
 
-	.ingredients, .recipe {
+	.recipe {
+		padding: 0;
+	}
+
+	.ingredients {
+		column-count: 2;
 		float: none;
+		margin: 2em 0;
 		width: 100%;
+
+		li {
+			break-inside: avoid;
+		}
 	}
 
 	.header-main {
@@ -306,4 +314,11 @@ li {
 		width: 100%;
 	}
 
+}
+
+@media (max-width: 480px) {
+
+	.ingredients {
+		column-count: 1;
+	}
 }
