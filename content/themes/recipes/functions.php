@@ -21,6 +21,7 @@ add_action('admin_menu', 'change_admin_post_label');
  */
 if (function_exists('acf_register_block_type')) {
 	add_action('acf/init', 'register_acf_block_types');
+	add_action('save_post', 'migrate_acf_ingredients');
 }
 
 
@@ -235,4 +236,76 @@ function get_ingredients_html($string, $echo = false) {
 	else {
 		return $html;
 	}
+}
+
+/**
+ * Copy ingredients content from old ACF meta field to new ACF block field
+ * @param  [integer] $post_id : ID of the post (recipe) to update
+ * @param  [boolean] $delete_meta : Whether to delete the old meta field content (default false)
+ */
+function migrate_acf_ingredients($post_id, $delete_meta = false) {
+
+	// disable save action hook to prevent infinite loop
+	remove_action('save_post', 'migrate_acf_ingredients');
+
+	// ignore other post types
+	if (get_post_type($post_id) != 'post') {
+		return;
+	}
+
+	$post = get_post($post_id);
+
+	// field to get
+	$field_name = 'ingredients';
+	$block_name = 'ingredients';
+
+	// skip if post content already has block
+	if (stristr($post->post_content, "<!-- wp:acf/$block_name")) {
+		return;
+	}
+
+	// get field in block format
+	$block_content = get_acf_meta_block_format($field_name, $block_name, $post_id);
+
+	// update post content with new block content prepended
+	wp_update_post(array(
+		'ID' => $post_id,
+		'post_content' => wp_slash($block_content) . "\n\n" . $post->post_content,
+	));
+
+	if ($delete_meta) {
+		// delete meta field
+		delete_field($field_name, $post_id);
+	}
+
+	// re-enable save action hook
+	add_action('save_post', 'migrate_acf_ingredients');
+}
+
+
+/**
+ * Convert ACF meta field data to the ACF block format
+ * @param  [string]  $field_name
+ * @param  [string]  $block_name
+ * @param  [int]     $post_id
+ * @return [string]
+ */
+function get_acf_meta_block_format($field_name, $block_name, $post_id) {
+
+	if (function_exists('get_field_object')) {
+		$field = get_field_object($field_name, $post_id);
+	}
+
+	$field_data = array(
+		$field['key'] => $field['value']
+	);
+
+	$block_data = array(
+		'name' => "acf/$block_name",
+		'data' => $field_data,
+	);
+
+	$json_data = json_encode($block_data);
+
+	return "<!-- wp:acf/$block_name $json_data /-->";
 }
