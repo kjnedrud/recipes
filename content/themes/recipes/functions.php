@@ -271,7 +271,7 @@ function migrate_acf_ingredients($post_or_id) {
 		// update post content with new block content prepended
 		wp_update_post(array(
 			'ID' => $post_id,
-			'post_content' => wp_slash($block_content) . "\n\n" . $post->post_content,
+			'post_content' => wp_slash($block_content) . "\n\n" . wpautop($post->post_content),
 		));
 	}
 }
