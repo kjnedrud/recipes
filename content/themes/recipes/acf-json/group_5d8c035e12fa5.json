@@ -1,6 +1,6 @@
 {
     "key": "group_5d8c035e12fa5",
-    "title": "Recipe Fields",
+    "title": "Block - Ingredients",
     "fields": [
         {
             "key": "field_5622a0a470c55",
@@ -25,13 +25,6 @@
     "location": [
         [
             {
-                "param": "post_type",
-                "operator": "==",
-                "value": "post"
-            }
-        ],
-        [
-            {
                 "param": "block",
                 "operator": "==",
                 "value": "acf\/ingredients"
@@ -51,5 +44,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1570503391
+    "modified": 1570754626
 }
