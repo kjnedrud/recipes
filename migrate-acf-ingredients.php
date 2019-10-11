@@ -10,6 +10,7 @@ if (function_exists('migrate_acf_ingredients')) {
 
 	$posts = get_posts(array(
 		'numberposts' => -1,
+		'post_status' => array('publish', 'draft', 'pending'),
 	));
 
 	foreach($posts as $post) {
